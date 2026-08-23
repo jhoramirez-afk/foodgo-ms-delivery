@@ -1,0 +1,8 @@
+services:
+  delivery-svc:
+    build: .
+    image: duoc/jv0101-foodgo-delivery:1.0.0
+    container_name: foodgo-delivery-svc
+    ports:
+      - "${PORT:-8085}:8085"
+    restart: unless-stopped
