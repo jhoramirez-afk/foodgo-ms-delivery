@@ -1,8 +1,38 @@
 services:
-  delivery-svc:
+  mysql:
+    image: mysql:8.4
+    container_name: foodgo-delivery-mysql
+    environment:
+      MYSQL_DATABASE: foodgo_delivery
+      MYSQL_USER: foodgo
+      MYSQL_PASSWORD: foodgo
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "${DB_EXPOSE_PORT:-33065}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
     build: .
-    image: duoc/jv0101-foodgo-delivery:1.0.0
     container_name: foodgo-delivery-svc
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: foodgo_delivery
+      DB_USER: foodgo
+      DB_PASSWORD: foodgo
+      PORT: 8085
+    depends_on:
+      mysql:
+        condition: service_healthy
     ports:
       - "${PORT:-8085}:8085"
-    restart: unless-stopped
+
+volumes:
+  mysql_data:

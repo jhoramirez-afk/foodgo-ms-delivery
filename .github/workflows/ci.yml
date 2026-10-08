@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop", "feature/**" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build:
@@ -35,3 +35,11 @@ jobs:
         with:
           name: cucumber-report
           path: target/cucumber/
+
+      - name: Publicar JAR validado
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: foodgo-jar
+          path: target/*.jar
+          if-no-files-found: error

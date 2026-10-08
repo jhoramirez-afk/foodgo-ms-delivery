@@ -1,6 +1,13 @@
 target/
-*.class
 .idea/
 .vscode/
 *.iml
+.classpath
+.project
+.settings/
 .DS_Store
+*.log
+.env
+
+# Base H2 local; no versionar datos de ejecución
+data/
