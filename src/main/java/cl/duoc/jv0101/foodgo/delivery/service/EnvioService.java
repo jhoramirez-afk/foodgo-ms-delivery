@@ -3,10 +3,12 @@ package cl.duoc.jv0101.foodgo.delivery.service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import cl.duoc.jv0101.foodgo.delivery.model.Envio;
 import cl.duoc.jv0101.foodgo.delivery.repository.EnvioRepository;
 
 @Service
+@Transactional
 public class EnvioService {
 
     private final EnvioRepository repository;
@@ -15,15 +17,18 @@ public class EnvioService {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<Envio> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Envio> findById(Long id) {
         return repository.findById(id);
     }
 
     public Envio create(Envio recurso) {
+        recurso.setId(null);
         return repository.save(recurso);
     }
 
