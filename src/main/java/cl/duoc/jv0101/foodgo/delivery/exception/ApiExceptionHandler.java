@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ApiError> businessRule(BusinessRuleException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Solicitud inválida", request, Map.of(ex.getField(), ex.getMessage()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> notFound(ResourceNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, Map.of());
