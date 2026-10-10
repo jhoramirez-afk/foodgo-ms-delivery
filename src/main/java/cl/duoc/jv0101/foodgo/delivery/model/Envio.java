@@ -1,5 +1,9 @@
 package cl.duoc.jv0101.foodgo.delivery.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
@@ -12,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 
@@ -24,12 +27,17 @@ public class Envio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El pedido es obligatorio")
+    @NotBlank(message = "Pedido es obligatorio")
+    @Size(max = 255, message = "El campo admite hasta 255 caracteres")
     @Column(nullable = false)
     private String pedido;
-    @Column
+    @NotBlank(message = "Repartidor es obligatorio")
+    @Size(max = 255, message = "El campo admite hasta 255 caracteres")
+    @Column(nullable = false)
     private String repartidor;
-    @Column
+    @NotBlank(message = "Estado de envío es obligatorio")
+    @Pattern(regexp = "ASIGNADO|RETIRADO|EN_CAMINO|ENTREGADO|CANCELADO", message = "Estado de envío debe ser ASIGNADO, RETIRADO, EN_CAMINO, ENTREGADO, CANCELADO")
+    @Column(nullable = false)
     private String estado;
 
     @Valid

@@ -33,10 +33,10 @@ public class EnvioSteps {
         return "http://localhost:" + port + "/api/envios";
     }
 
-    private HttpEntity<Map<String, String>> body(String valor) {
+    private HttpEntity<Map<String, Object>> body(String valor) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return new HttpEntity<>(Map.of("pedido", valor), headers);
+        return new HttpEntity<>(Map.of("pedido", valor, "repartidor", "Diego Herrera", "estado", "ASIGNADO"), headers);
     }
 
     @Given("el servicio {string} está disponible")

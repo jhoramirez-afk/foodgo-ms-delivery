@@ -1,48 +1,41 @@
-# Envio — Contrato de la API REST
+# API REST: delivery
 
-## Base
+Base local: http://localhost:8085/api. Swagger UI: http://localhost:8085/swagger-ui/index.html.
 
-- **Base path**: `/api/envios`
-- **Formato**: JSON — **Puerto**: 8085 (configurable con `PORT`)
+| Método | Ruta | HTTP de éxito |
+|---|---|---:|
+| POST | /envios | 201 |
+| GET | /envios | 200 |
+| GET | /envios/{id} | 200 |
+| PUT | /envios/{id} | 200 |
+| DELETE | /envios/{id} | 204 |
+| POST | /envios/{id}/tracking | 201 |
+| GET | /envios/{id}/tracking | 200 |
+| GET | /tracking/{id} | 200 |
+| PUT | /tracking/{id} | 200 |
+| DELETE | /tracking/{id} | 204 |
 
-## Recursos
+## Crear entidad principal
 
-| Método | Ruta | Códigos de estado | Descripción |
-|--------|------|-------------------|-------------|
-| GET | `/api/envios` | 200 | Lista todos los recursos |
-| GET | `/api/envios/{id}` | 200 / 404 | Obtiene un recurso por id |
-| POST | `/api/envios` | 201 / 400 | Crea un recurso |
-| PUT | `/api/envios/{id}` | 200 / 404 / 400 | Actualiza un recurso |
-| DELETE | `/api/envios/{id}` | 204 / 404 | Elimina un recurso |
-
-## Atributos de un recurso
-
-| Campo | Tipo | Obligatorio | Descripción |
-|-------|------|-------------|-------------|
-| id | Long | - | Identificador autogenerado |
-| pedido | String | Sí | Campo principal del recurso |
-| repartidor | String | No | Campo del dominio |
-| estado | String | No | Campo del dominio |
-
-## Ejemplos con curl
-
-```bash
-# Listar
-curl http://localhost:8085/api/envios
-
-# Crear
-curl -X POST http://localhost:8085/api/envios \
-  -H "Content-Type: application/json" \
-  -d '{"pedido":"Demo"}'
-
-# Obtener por id
-curl http://localhost:8085/api/envios/1
-
-# Actualizar
-curl -X PUT http://localhost:8085/api/envios/1 \
-  -H "Content-Type: application/json" \
-  -d '{"pedido":"Actualizado"}'
-
-# Eliminar
-curl -X DELETE http://localhost:8085/api/envios/1
+```json
+{
+  "pedido": "PED-DEMO",
+  "repartidor": "Diego Herrera",
+  "estado": "ASIGNADO"
+}
 ```
+
+## Crear entidad relacionada
+
+```json
+{
+  "estado": "ASIGNADO",
+  "latitud": -33.43121,
+  "longitud": -70.61975,
+  "fechaHora": "2026-10-01T13:30:00"
+}
+```
+
+Usar el ID retornado por la creación del padre. Los ID son generados por la BD. Editar los hijos mediante sus propias rutas. Ver las reglas y los campos calculados en REGLAS_EP02.md.
+
+Errores: 400 para datos o JSON inválidos; 404 para recurso/relación local inexistente; 409 para conflictos de integridad o unicidad cuando corresponda. Un campo demasiado largo devuelve 400. Los mensajes y validationErrors se entregan mediante ApiExceptionHandler.

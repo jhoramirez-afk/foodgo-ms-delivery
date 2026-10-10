@@ -1,47 +1,13 @@
-# Envio — Despliegue y operación
+# Ejecución local EP02
 
-## Requisitos
+Seguir README para clonar, instalar dependencias y ejecutar con Java 21 y Maven. El perfil test usa H2 en memoria para aislar las pruebas. El perfil local usa H2 en disco; el perfil mysql usa el servidor relacional elegido.
 
-- Java 21, Maven 3.9 (build local)
-- Docker + Docker Compose (despliegue)
-
-## Ejecución local
+Para la demostración con Workbench: usar los mismos DB_HOST, DB_PORT, DB_NAME y DB_USER que en Spring Boot, y entregar DB_PASSWORD mediante el entorno. Workbench consulta la BD; no sustituye al servidor MySQL. En este equipo, FoodGo usa 127.0.0.1:3307. En otro equipo, adaptar el host, puerto y usuario sin modificar el código.
 
 ```bash
-mvn spring-boot:run
+mvn clean install
+mvn package
+java -jar target/delivery-svc-2.0.0.jar --spring.profiles.active=mysql
 ```
 
-URLs en `http://localhost:8085`:
-
-| Recurso | URL |
-|---------|-----|
-| Página de presentación | `/` |
-| Swagger UI | `/swagger-ui/index.html` |
-| OpenAPI yaml | `/v3/api-docs.yaml` |
-| ReDoc | `/redoc.html` |
-| H2 Console | `/h2-console` |
-| API base | `/api/envios` |
-
-## Docker
-
-```bash
-docker build -t duoc/jv0101-foodgo-delivery:1.0.0 .
-docker run -p 8085:8085 duoc/jv0101-foodgo-delivery:1.0.0
-```
-
-## Docker Compose
-
-```bash
-docker compose up --build
-PORT=9090 docker compose up --build   # cambiar puerto host
-```
-
-## Base de datos
-
-H2 en memoria (se pierde al detener el contenedor), configurable en `src/main/resources/application.yml`. Consola web en `/h2-console` (JDBC URL, usuario `sa`, sin clave).
-
-## Variables de entorno
-
-| Variable | Defecto | Descripción |
-|----------|---------|-------------|
-| `PORT` | `8085` | Puerto del servidor y mapeo del contenedor |
+No usar credenciales reales en archivos versionados. Los ejemplos y el escenario se cargan desde Postman. La evaluación se demuestra localmente y no requiere componentes adicionales de infraestructura.

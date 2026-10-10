@@ -31,7 +31,7 @@ class EnvioServiceTest {
         r.setId(1L);
         r.setPedido("Demo");
         r.setRepartidor("valor");
-        r.setEstado("Demo");
+        r.setEstado("ASIGNADO");
         return r;
     }
 
