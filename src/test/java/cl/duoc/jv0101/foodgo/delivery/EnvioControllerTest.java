@@ -42,7 +42,7 @@ class EnvioControllerTest {
         r.setId(id);
         r.setPedido("Demo");
         r.setRepartidor("valor");
-        r.setEstado("Demo");
+        r.setEstado("ASIGNADO");
         return r;
     }
 
