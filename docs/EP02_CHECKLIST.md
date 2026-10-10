@@ -12,3 +12,11 @@
 | IE5 | CRUD persistente sobre entidades JPA |
 | IE7 | README documenta `mvn clean`, `test`, `install`, `package` y ejecución del `.jar` |
 | IE10 | README documenta clonación, dependencias, ejecución H2 y ejecución MySQL |
+
+## Ajustes de integridad
+
+- Reglas y límites del dominio: `REGLAS_EP02.md`.
+- Datos ficticios verosímiles y pruebas de error en `postman/`.
+- Importes calculados en service donde corresponda.
+- Credenciales MySQL mediante variables de entorno.
+- Validar la nueva versión antes de marcar la entrega; el video sigue a cargo de los estudiantes.

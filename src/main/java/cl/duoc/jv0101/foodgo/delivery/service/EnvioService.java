@@ -1,6 +1,9 @@
 package cl.duoc.jv0101.foodgo.delivery.service;
 
 import java.util.List;
+import java.util.Comparator;
+import cl.duoc.jv0101.foodgo.delivery.model.EventoTracking;
+import cl.duoc.jv0101.foodgo.delivery.exception.BusinessRuleException;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,8 @@ public class EnvioService {
 
     public Envio create(Envio recurso) {
         recurso.setId(null);
+        recurso.getTracking().forEach(item -> item.setId(null));
+        if (!recurso.getTracking().isEmpty()) recurso.setEstado(ultimoEstado(recurso.getTracking()));
         return repository.save(recurso);
     }
 
@@ -36,6 +41,9 @@ public class EnvioService {
         return repository.findById(id).map(existente -> {
             existente.setPedido(datos.getPedido());
             existente.setRepartidor(datos.getRepartidor());
+            if (!existente.getTracking().isEmpty() && !ultimoEstado(existente.getTracking()).equals(datos.getEstado())) {
+                throw new BusinessRuleException("estado", "El estado debe coincidir con el último evento de tracking");
+            }
             existente.setEstado(datos.getEstado());
             return repository.save(existente);
         });
@@ -46,5 +54,10 @@ public class EnvioService {
             repository.delete(existente);
             return true;
         }).orElse(false);
+    }
+    public static String ultimoEstado(List<EventoTracking> eventos) {
+        return eventos.stream().max(Comparator.comparing(EventoTracking::getFechaHora)
+                .thenComparing(evento -> evento.getId() == null ? Long.MAX_VALUE : evento.getId()))
+                .map(EventoTracking::getEstado).orElse("ASIGNADO");
     }
 }

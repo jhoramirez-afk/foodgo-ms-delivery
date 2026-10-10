@@ -40,7 +40,9 @@ public class EventoTrackingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Envio no encontrado con id " + envioId));
         recurso.setId(null);
         recurso.setEnvio(envio);
-        return repository.save(recurso);
+        EventoTracking guardado = repository.save(recurso);
+        actualizarEstado(envio);
+        return guardado;
     }
 
     public EventoTracking update(Long id, EventoTracking datos) {
@@ -49,11 +51,19 @@ public class EventoTrackingService {
         existente.setLatitud(datos.getLatitud());
         existente.setLongitud(datos.getLongitud());
         existente.setFechaHora(datos.getFechaHora());
-        return repository.save(existente);
+        EventoTracking guardado = repository.save(existente);
+        actualizarEstado(existente.getEnvio());
+        return guardado;
     }
 
     public void delete(Long id) {
         EventoTracking existente = findById(id);
+        Envio envio = existente.getEnvio();
         repository.delete(existente);
+        actualizarEstado(envio);
+    }
+    private void actualizarEstado(Envio envio) {
+        envio.setEstado(EnvioService.ultimoEstado(repository.findByEnvio_Id(envio.getId())));
+        // La entidad está administrada; JPA persiste el cambio al confirmar la transacción.
     }
 }
