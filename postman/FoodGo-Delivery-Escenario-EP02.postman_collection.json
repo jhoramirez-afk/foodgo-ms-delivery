@@ -1,0 +1,1411 @@
+{
+  "info": {
+    "_postman_id": "c393fab1-8137-499e-9c43-ec7f1e25fcf8",
+    "name": "FoodGo | Pedido de Camila | Escenario EP02",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Escenario ficticio coherente para demostrar los ocho CRUD y las relaciones JPA. Postman transfiere los ID entre peticiones; las API no realizan llamadas entre servicios. 2 x 9990 = 19980; cupón 10% = 1998; pago = 17982. Ejecutar 01, 02 y 03 para conservar los datos. La carpeta 99 elimina exclusivamente los registros capturados en esta ejecución. Los avisos y pagos son registros académicos."
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "url_usuarios",
+      "value": "http://127.0.0.1:8081",
+      "type": "string"
+    },
+    {
+      "key": "url_restaurantes",
+      "value": "http://127.0.0.1:8082",
+      "type": "string"
+    },
+    {
+      "key": "url_pedidos",
+      "value": "http://127.0.0.1:8083",
+      "type": "string"
+    },
+    {
+      "key": "url_pagos",
+      "value": "http://127.0.0.1:8084",
+      "type": "string"
+    },
+    {
+      "key": "url_delivery",
+      "value": "http://127.0.0.1:8085",
+      "type": "string"
+    },
+    {
+      "key": "url_notificaciones",
+      "value": "http://127.0.0.1:8086",
+      "type": "string"
+    },
+    {
+      "key": "url_cupones",
+      "value": "http://127.0.0.1:8087",
+      "type": "string"
+    },
+    {
+      "key": "url_resenas",
+      "value": "http://127.0.0.1:8088",
+      "type": "string"
+    },
+    {
+      "key": "runTag",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fechaDemo",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fechaDemoActualizada",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fechaDemoFinal",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "usuarioId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "direccionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "restauranteId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pedidoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "detalleId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cuponId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "usoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "subtotalPedido",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "totalAPagar",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pagoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "transaccionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "envioId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "trackingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificacionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "intentoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "resenaId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "respuestaId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Pedido completo: datos ficticios coherentes",
+      "item": [
+        {
+          "name": "01 Registrar a Camila Soto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_usuarios}}/api/usuarios",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Camila Soto\",\n  \"rol\": \"CLIENTE\",\n  \"email\": \"camila.soto.{{runTag}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"runTag\", Date.now().toString(36).toUpperCase() + \"-\" + pm.variables.replaceIn(\"{{$randomUUID}}\").replace(/-/g, \"\").slice(0, 8).toUpperCase());",
+                  "const ayer = Date.now() - 24*60*60*1000;",
+                  "pm.collectionVariables.set(\"fechaDemo\", new Date(ayer).toISOString().slice(0,19));",
+                  "pm.collectionVariables.set(\"fechaDemoActualizada\", new Date(ayer + 5*60*1000).toISOString().slice(0,19));",
+                  "pm.collectionVariables.set(\"fechaDemoFinal\", new Date(ayer + 20*60*1000).toISOString().slice(0,19));",
+                  "pm.collectionVariables.unset(\"usuarioId\");",
+                  "pm.collectionVariables.unset(\"direccionId\");",
+                  "pm.collectionVariables.unset(\"restauranteId\");",
+                  "pm.collectionVariables.unset(\"productoId\");",
+                  "pm.collectionVariables.unset(\"pedidoId\");",
+                  "pm.collectionVariables.unset(\"detalleId\");",
+                  "pm.collectionVariables.unset(\"cuponId\");",
+                  "pm.collectionVariables.unset(\"usoId\");",
+                  "pm.collectionVariables.unset(\"pagoId\");",
+                  "pm.collectionVariables.unset(\"transaccionId\");",
+                  "pm.collectionVariables.unset(\"envioId\");",
+                  "pm.collectionVariables.unset(\"trackingId\");",
+                  "pm.collectionVariables.unset(\"notificacionId\");",
+                  "pm.collectionVariables.unset(\"intentoId\");",
+                  "pm.collectionVariables.unset(\"resenaId\");",
+                  "pm.collectionVariables.unset(\"respuestaId\");",
+                  "pm.collectionVariables.unset(\"subtotalPedido\");",
+                  "pm.collectionVariables.unset(\"totalAPagar\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Registrar dirección de entrega",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_usuarios}}/api/usuarios/{{usuarioId}}/direcciones",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alias\": \"Casa\",\n  \"calle\": \"Los Aromos 1450, departamento 302\",\n  \"comuna\": \"Ñuñoa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"direccionId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Registrar La Cocina de Barrio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_restaurantes}}/api/restaurantes",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"La Cocina de Barrio\",\n  \"categoria\": \"Hamburguesas\",\n  \"direccion\": \"Manuel Montt 820, Providencia\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"restauranteId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Registrar hamburguesa a $9.990",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_restaurantes}}/api/restaurantes/{{restauranteId}}/menu-items",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Hamburguesa de vacuno con papas\",\n  \"descripcion\": \"Pan brioche, vacuno, queso, tomate y papas rústicas.\",\n  \"precio\": 9990,\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"productoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 Crear pedido de Camila",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pedidos}}/api/pedidos",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Camila Soto\",\n  \"restaurante\": \"La Cocina de Barrio\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"pedidoId\", pm.response.json().id);",
+                  "pm.test(\"Pedido inicialmente sin detalles: total 0\", () => pm.expect(pm.response.json().total).to.eql(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Añadir dos hamburguesas al pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pedidos}}/api/pedidos/{{pedidoId}}/detalles",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productoId\": {{productoId}},\n  \"nombreProducto\": \"Hamburguesa de vacuno con papas\",\n  \"cantidad\": 2,\n  \"precioUnitario\": 9990\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"detalleId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 Comprobar total calculado de $19.980",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pedidos}}/api/pedidos/{{pedidoId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Total 2 x 9990 = 19980\", () => pm.expect(pm.response.json().total).to.eql(19980));",
+                  "pm.collectionVariables.set(\"subtotalPedido\", pm.response.json().total);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 Registrar cupón BARRIO10",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_cupones}}/api/cupones",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"BARRIO10-{{runTag}}\",\n  \"tipo\": \"PORCENTAJE\",\n  \"descuento\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"cuponId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 Aplicar 10% sobre el subtotal del pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_cupones}}/api/cupones/{{cuponId}}/usos",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": {{pedidoId}},\n  \"fechaUso\": \"{{fechaDemo}}\",\n  \"subtotalPedido\": {{subtotalPedido}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"usoId\", pm.response.json().id);",
+                  "pm.test(\"Descuento calculado de 1998\", () => pm.expect(pm.response.json().montoDescontado).to.eql(1998));",
+                  "pm.collectionVariables.set(\"totalAPagar\", Number(pm.collectionVariables.get(\"subtotalPedido\")) - pm.response.json().montoDescontado);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 Registrar pago de $17.982",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pagos}}/api/pagos",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedido\": \"PED-{{pedidoId}}\",\n  \"metodo\": \"TARJETA\",\n  \"monto\": {{totalAPagar}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"pagoId\", pm.response.json().id);",
+                  "pm.test(\"Pago neto correcto\", () => pm.expect(pm.response.json().monto).to.eql(17982));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 Registrar cobro aprobado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pagos}}/api/pagos/{{pagoId}}/transacciones",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"COBRO\",\n  \"monto\": {{totalAPagar}},\n  \"estado\": \"APROBADA\",\n  \"referencia\": \"FG-{{runTag}}-PED-{{pedidoId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"transaccionId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 Asignar entrega a Diego Herrera",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_delivery}}/api/envios",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedido\": \"PED-{{pedidoId}}\",\n  \"repartidor\": \"Diego Herrera\",\n  \"estado\": \"ASIGNADO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"envioId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 Registrar retiro del pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_delivery}}/api/envios/{{envioId}}/tracking",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"RETIRADO\",\n  \"latitud\": -33.43121,\n  \"longitud\": -70.61975,\n  \"fechaHora\": \"{{fechaDemo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"trackingId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14 Actualizar tracking a EN_CAMINO",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_delivery}}/api/tracking/{{trackingId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EN_CAMINO\",\n  \"latitud\": -33.44712,\n  \"longitud\": -70.59968,\n  \"fechaHora\": \"{{fechaDemoActualizada}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15 Registrar aviso de seguimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_notificaciones}}/api/notificaciones",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinatario\": \"camila.soto.{{runTag}}@example.com\",\n  \"canal\": \"EMAIL\",\n  \"mensaje\": \"Camila, Diego lleva tu pedido PED-{{pedidoId}} a Los Aromos 1450. Total pagado: $17.982 CLP.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"notificacionId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16 Registrar intento de aviso académico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_notificaciones}}/api/notificaciones/{{notificacionId}}/intentos",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resultado\": \"ENVIADO\",\n  \"fechaHora\": \"{{fechaDemo}}\",\n  \"detalle\": \"Registro académico de entrega del aviso de confirmación.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"intentoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "17 Registrar entrega completada",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_delivery}}/api/tracking/{{trackingId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ENTREGADO\",\n  \"latitud\": -33.44712,\n  \"longitud\": -70.59968,\n  \"fechaHora\": \"{{fechaDemoFinal}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18 Comprobar estado ENTREGADO",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_delivery}}/api/envios/{{envioId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envío coherente con tracking\", () => pm.expect(pm.response.json().estado).to.eql(\"ENTREGADO\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19 Registrar reseña del pedido entregado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_resenas}}/api/resenas",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedido\": \"PED-{{pedidoId}}\",\n  \"comentario\": \"Las hamburguesas llegaron calientes y el repartidor encontró la dirección sin problemas.\",\n  \"calificacion\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"resenaId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20 Registrar respuesta del restaurante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_resenas}}/api/resenas/{{resenaId}}/respuestas",
+            "description": "Respuesta esperada: HTTP 201. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autor\": \"La Cocina de Barrio\",\n  \"mensaje\": \"Gracias, Camila. Nos alegra que disfrutaras las hamburguesas.\",\n  \"fechaHora\": \"{{fechaDemo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"ID generado\", () => pm.expect(Number.isInteger(pm.response.json().id) && pm.response.json().id > 0).to.eql(true));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"respuestaId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 Consultar persistencia y relaciones",
+      "item": [
+        {
+          "name": "Consultar usuarios con relación JPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_usuarios}}/api/usuarios/{{usuarioId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar restaurantes con relación JPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_restaurantes}}/api/restaurantes/{{restauranteId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar pedidos con relación JPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pedidos}}/api/pedidos/{{pedidoId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar cupones con relación JPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_cupones}}/api/cupones/{{cuponId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar pagos con relación JPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pagos}}/api/pagos/{{pagoId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar resenas con relación JPA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_resenas}}/api/resenas/{{resenaId}}",
+            "description": "Respuesta esperada: HTTP 200. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Errores del negocio",
+      "item": [
+        {
+          "name": "Correo inválido: 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_usuarios}}/api/usuarios",
+            "description": "Respuesta esperada: HTTP 400. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Camila Soto\",\n  \"rol\": \"CLIENTE\",\n  \"email\": \"sin-arroba\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Error estructurado\", () => { pm.expect(pm.response.json().status).to.eql(400); pm.expect(typeof pm.response.json().message).to.eql(\"string\"); });",
+                  "pm.test(\"Campo rechazado: email\", () => pm.expect(Object.prototype.hasOwnProperty.call(pm.response.json().validationErrors,\"email\")).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Descuento superior a 100%: 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_cupones}}/api/cupones",
+            "description": "Respuesta esperada: HTTP 400. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"BARRIO10-{{runTag}}\",\n  \"tipo\": \"PORCENTAJE\",\n  \"descuento\": 101\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Error estructurado\", () => { pm.expect(pm.response.json().status).to.eql(400); pm.expect(typeof pm.response.json().message).to.eql(\"string\"); });",
+                  "pm.test(\"Campo rechazado: porcentajeValido\", () => pm.expect(Object.prototype.hasOwnProperty.call(pm.response.json().validationErrors,\"porcentajeValido\")).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cobro adicional supera el pago: 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pagos}}/api/pagos/{{pagoId}}/transacciones",
+            "description": "Respuesta esperada: HTTP 400. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"COBRO\",\n  \"monto\": 1000,\n  \"estado\": \"APROBADA\",\n  \"referencia\": \"COBRO-EXCESO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Error estructurado\", () => { pm.expect(pm.response.json().status).to.eql(400); pm.expect(typeof pm.response.json().message).to.eql(\"string\"); });",
+                  "pm.test(\"Campo rechazado: monto\", () => pm.expect(Object.prototype.hasOwnProperty.call(pm.response.json().validationErrors,\"monto\")).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Calificación superior a cinco: 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_resenas}}/api/resenas",
+            "description": "Respuesta esperada: HTTP 400. Datos ficticios para la EP02.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedido\": \"PED-{{runTag}}\",\n  \"comentario\": \"Las hamburguesas llegaron calientes y el repartidor encontró la dirección sin problemas.\",\n  \"calificacion\": 6\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Error estructurado\", () => { pm.expect(pm.response.json().status).to.eql(400); pm.expect(typeof pm.response.json().message).to.eql(\"string\"); });",
+                  "pm.test(\"Campo rechazado: calificacion\", () => pm.expect(Object.prototype.hasOwnProperty.call(pm.response.json().validationErrors,\"calificacion\")).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "99 Limpieza opcional del escenario",
+      "item": [
+        {
+          "name": "Eliminar resenas creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_resenas}}/api/resenas/{{resenaId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar notificaciones creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_notificaciones}}/api/notificaciones/{{notificacionId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar delivery creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_delivery}}/api/envios/{{envioId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar pagos creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pagos}}/api/pagos/{{pagoId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar cupones creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_cupones}}/api/cupones/{{cuponId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar pedidos creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_pedidos}}/api/pedidos/{{pedidoId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar restaurantes creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_restaurantes}}/api/restaurantes/{{restauranteId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar usuarios creado en el escenario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{url_usuarios}}/api/usuarios/{{usuarioId}}",
+            "description": "Respuesta esperada: HTTP 204. Datos ficticios para la EP02."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
