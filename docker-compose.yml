@@ -32,7 +32,9 @@ services:
       dockerfile: "Dockerfile"
     image: "foodgo/delivery:ep02"
     environment:
-      SPRING_PROFILES_ACTIVE: "mysql"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-mysql}"
+      EUREKA_URL: "${EUREKA_URL:-http://host.docker.internal:8761/eureka/}"
+      EUREKA_PREFER_IP_ADDRESS: "true"
       DB_HOST: "mysql"
       DB_PORT: "3306"
       DB_NAME: "foodgo_delivery"
