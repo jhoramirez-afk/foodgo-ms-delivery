@@ -163,3 +163,7 @@ java -jar target/delivery-svc-2.0.0.jar --spring.profiles.active=mysql
 ```
 
 En Workbench, abrir el mismo host, puerto y esquema y ejecutar las consultas de `docs/DEMO_EP02.md`. Ejecutar la colección en orden. Para conservar el CRUD visible en la BD, detenerse después de la primera carpeta; la última comprueba DELETE y cascada.
+
+## Docker con base MySQL persistente
+
+Seguir [docs/DOCKER_EP02.md](docs/DOCKER_EP02.md): copiar .env.example a .env, completar las contraseñas y ejecutar docker compose build, después docker compose up -d --wait --wait-timeout 300. El build ejecuta pruebas y cobertura con Maven clean verify; app espera la base y verifica HTTP. Los volúmenes conservan datos al reiniciar. APP_PORT permite evitar conflictos con un servicio local.

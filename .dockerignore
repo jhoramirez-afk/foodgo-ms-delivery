@@ -1,5 +1,12 @@
+.git/
 target/
-*.class
+data/
+.runtime/
 .idea/
 .vscode/
+*.class
 *.iml
+*.log
+.env
+.env.*
+!.env.example

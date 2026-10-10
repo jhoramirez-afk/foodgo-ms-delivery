@@ -1,38 +1,51 @@
+name: "foodgo-delivery"
 services:
   mysql:
-    image: mysql:8.4
-    container_name: foodgo-delivery-mysql
+    image: "mysql:8.4.11"
     environment:
-      MYSQL_DATABASE: foodgo_delivery
-      MYSQL_USER: foodgo
-      MYSQL_PASSWORD: foodgo
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: "foodgo_delivery"
+      MYSQL_USER: "${DB_USER:-foodgo_ep02}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:?Definir DB_PASSWORD en el archivo de entorno}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Definir MYSQL_ROOT_PASSWORD en el archivo de entorno}"
     ports:
-      - "${DB_EXPOSE_PORT:-33065}:3306"
+      - "127.0.0.1:${DB_EXPOSE_PORT:-33065}:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - "mysql_data:/var/lib/mysql"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_0900_ai_ci"
+      - "--innodb-buffer-pool-size=128M"
+      - "--max-connections=40"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-
+      test:
+        - "CMD-SHELL"
+        - "MYSQL_PWD=\"$${MYSQL_PASSWORD}\" mysql --protocol=TCP -h127.0.0.1 -u\"$${MYSQL_USER}\" -D\"$${MYSQL_DATABASE}\" -e \"SELECT 1\" >/dev/null 2>&1"
+      interval: "5s"
+      timeout: "5s"
+      start_period: "45s"
+      retries: 30
+    restart: "unless-stopped"
+    stop_grace_period: "45s"
   app:
-    build: .
-    container_name: foodgo-delivery-svc
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    image: "foodgo/delivery:ep02"
     environment:
-      SPRING_PROFILES_ACTIVE: mysql
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_NAME: foodgo_delivery
-      DB_USER: foodgo
-      DB_PASSWORD: foodgo
-      PORT: 8085
+      SPRING_PROFILES_ACTIVE: "mysql"
+      DB_HOST: "mysql"
+      DB_PORT: "3306"
+      DB_NAME: "foodgo_delivery"
+      DB_USER: "${DB_USER:-foodgo_ep02}"
+      DB_PASSWORD: "${DB_PASSWORD:?Definir DB_PASSWORD en el archivo de entorno}"
+      PORT: "8085"
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx384m"
     depends_on:
       mysql:
-        condition: service_healthy
+        condition: "service_healthy"
     ports:
-      - "${PORT:-8085}:8085"
-
+      - "127.0.0.1:${APP_PORT:-8085}:8085"
+    restart: "unless-stopped"
+    stop_grace_period: "30s"
 volumes:
-  mysql_data:
+  mysql_data: {}
