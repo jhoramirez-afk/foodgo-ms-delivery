@@ -167,3 +167,7 @@ En Workbench, abrir el mismo host, puerto y esquema y ejecutar las consultas de 
 ## Docker con base MySQL persistente
 
 Seguir [docs/DOCKER_EP02.md](docs/DOCKER_EP02.md): copiar .env.example a .env, completar las contraseñas y ejecutar docker compose build, después docker compose up -d --wait --wait-timeout 300. El build ejecuta pruebas y cobertura con Maven clean verify; app espera la base y verifica HTTP. Los volúmenes conservan datos al reiniciar. APP_PORT permite evitar conflictos con un servicio local.
+
+## Eureka y demostración directa en VS Code
+
+Activar los perfiles mysql,eureka para registrar el servicio en http://127.0.0.1:8761. [docs/EUREKA_EP02.md](docs/EUREKA_EP02.md) contiene los comandos Maven/Java directos, variables MySQL, verificación del registro y uso de Postman/Workbench. El perfil eureka es explícito para conservar la ejecución independiente y las pruebas.
