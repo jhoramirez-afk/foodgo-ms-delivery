@@ -3,12 +3,12 @@
 ## CRUD, relación y persistencia
 
 1. Compilar con mvn clean install y mostrar el JAR generado.
-2. Ejecutar con el perfil mysql según README.
+2. Ejecutar con el perfil postgres según README.
 3. En Postman, ejecutar Crear, consultar y actualizar. Explicar los HTTP 201/200 y los ID retornados.
-4. En Workbench, usar el esquema foodgo_delivery y ejecutar:
+4. En pgAdmin, abrir Query Tool sobre la base foodgo_delivery y ejecutar:
 
 ```sql
-USE foodgo_delivery;
+SELECT current_database() AS base, current_user AS usuario;
 SELECT * FROM envios;
 SELECT * FROM eventos_tracking;
 SELECT p.id AS padre_id, h.*

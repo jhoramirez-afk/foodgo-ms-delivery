@@ -1,33 +1,30 @@
-# Docker EP02: delivery
+# Docker EP02: delivery con PostgreSQL
 
-Docker construye el mismo código Java 21/Spring Boot del repositorio. El build ejecuta Maven clean verify, pruebas y cobertura; solo el JAR y JRE quedan en la imagen final.
-El contenedor app se conecta a mysql:3306 dentro de la red de Compose, usando el perfil mysql. MySQL guarda datos en un volumen independiente. La aplicación espera a que SELECT 1 con la cuenta de aplicación pase; su healthcheck consulta una ruta real contra la BD.
+El build utiliza Java 21 y Spring Boot, ejecuta Maven clean verify y empaqueta el JAR. Compose inicia una base PostgreSQL del dominio y la app con perfil postgres. El control de la base ejecuta SELECT 1; el de la app consulta una ruta REST que accede a la BD.
 
 ## Ejecutar desde un clon nuevo
 
-```powershell
+```cmd
 git clone https://github.com/jhoramirez-afk/foodgo-ms-delivery.git
-Set-Location foodgo-ms-delivery
-Copy-Item .env.example .env
-```
-
-Editar .env y completar DB_PASSWORD y MYSQL_ROOT_PASSWORD con contraseñas locales. .env está excluido de Git y del contexto Docker. APP_PORT es el puerto publicado en Windows; PORT dentro del contenedor no cambia.
-
-```powershell
+cd foodgo-ms-delivery
+copy .env.example .env
 docker compose config --quiet
 docker compose build --progress plain
 docker compose up -d --wait --wait-timeout 300
 docker compose ps
 ```
 
-API por defecto: http://127.0.0.1:8085/api/envios. Swagger: http://127.0.0.1:8085/swagger-ui/index.html.
-Si el servicio local ya ocupa 8085, usar APP_PORT=18085 en .env. Para Workbench: host 127.0.0.1, puerto DB_EXPOSE_PORT (por defecto 33065), usuario DB_USER y esquema foodgo_delivery.
+Antes de ejecutar Compose, completar DB_PASSWORD en .env. Este archivo está excluido de Git y del contexto Docker. La contraseña del contenedor puede elegirse para esa instancia independiente.
+
+La API se publica por defecto en http://127.0.0.1:18085/api/delivery. APP_PORT permite cambiarlo. Dentro de Compose, Java conecta a postgres:5432; pgAdmin desde Windows conecta a 127.0.0.1:54325, base foodgo_delivery, usuario DB_USER. DB_EXPOSE_PORT permite cambiar ese puerto.
+
+PostgreSQL 18 conserva sus datos en el volumen postgres_data montado en /var/lib/postgresql. El nombre del proyecto Compose es foodgo-delivery-postgres: los contenedores y volúmenes MySQL anteriores se conservan separados. No copiar archivos físicos MySQL al volumen PostgreSQL.
 
 ## CRUD y persistencia
 
-Importar la colección de postman/ y ajustar baseUrl al APP_PORT elegido. Ejecutar crear/leer/actualizar, consultar las tablas en Workbench y después probar errores y DELETE. Los datos son ficticios. Los ID se capturan automáticamente.
+Importar las colecciones de postman/ y ajustar baseUrl al APP_PORT. Ejecutar crear, consultar y actualizar; comprobar los mismos ID en pgAdmin. Mostrar errores y completar DELETE.
 
-```powershell
+```cmd
 docker compose restart
 docker compose ps
 docker compose logs --tail 50 app
@@ -35,11 +32,8 @@ docker compose stop
 docker compose start --wait --wait-timeout 300
 ```
 
-Repetir GET por los mismos ID y SELECT para demostrar que los datos persisten. stop/start conserva contenedores y volúmenes. down conserva los volúmenes por defecto; no añadir --volumes/-v durante la demostración porque eliminaría la base.
-No copiar los archivos de MySQL de Windows dentro del contenedor. La instancia Docker tiene su propia base; crear sus ejemplos con Postman. La instancia FoodGo local en 3307 se conserva.
+Repetir GET y SELECT con los mismos ID tras el reinicio. No añadir -v/--volumes a down durante la demostración: esos parámetros eliminan los volúmenes de esta instancia.
 
-## Pauta
+Para registrar la app en Eureka del host, definir SPRING_PROFILES_ACTIVE=postgres,eureka y EUREKA_URL=http://host.docker.internal:8761/eureka/ en .env. Los puertos de Postman corresponden a los publicados en Windows.
 
-La EP02 se evidencia mostrando REST/capas/JPA, conexión en application-mysql.yml y POM, CRUD y errores en Postman/Workbench, Maven/JAR, README y ramas/commits. Docker empaqueta esos mismos componentes; no agrega microservicios ni funciones de negocio.
-
-Referencias: [build por etapas](https://docs.docker.com/build/building/multi-stage/), [orden y healthchecks de Compose](https://docs.docker.com/compose/how-tos/startup-order/), [MySQL oficial](https://hub.docker.com/_/mysql).
+Referencias: [PostgreSQL oficial](https://hub.docker.com/_/postgres), [healthchecks y orden](https://docs.docker.com/compose/how-tos/startup-order/).
