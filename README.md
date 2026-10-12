@@ -14,7 +14,8 @@ Gestiona la asignación y seguimiento de envíos, registrando eventos de trackin
 - Spring Data JPA / Hibernate
 - Bean Validation
 - H2 para ejecución rápida local y pruebas
-- MySQL 8.4 mediante perfil `mysql` y Docker Compose
+- PostgreSQL 18 mediante perfil `postgres` y Docker Compose
+- Perfil `mysql` anterior conservado para facilitar la transición
 - Maven
 - OpenAPI / Swagger UI
 
@@ -90,13 +91,13 @@ JDBC H2: `jdbc:h2:file:./data/foodgo_delivery`
 Usuario: `sa`
 Contraseña: vacía.
 
-## Ejecución con MySQL
+## Ejecución con PostgreSQL
 
 ```bash
 docker compose up --build
 ```
 
-El `docker-compose.yml` levanta el microservicio y una base MySQL independiente para el dominio.
+El `docker-compose.yml` levanta el microservicio y una base PostgreSQL independiente para el dominio.
 
 ## Maven y empaquetado
 
@@ -144,30 +145,39 @@ Pedido y repartidor obligatorios. Estados ASIGNADO, RETIRADO, EN_CAMINO, ENTREGA
 
 Los importes usan pesos chilenos enteros. Se valida formato e integridad, no identidad de personas ni direcciones externas. Los datos de demostración son ficticios. Campos demasiado largos devuelven 400 antes de llegar a la BD.
 
-## MySQL local con Workbench
+## PostgreSQL local con pgAdmin 4
 
-Workbench es el cliente SQL. El servicio se conecta al servidor MySQL mediante Connector/J. Crear previamente el esquema `foodgo_delivery` y otorgar permisos al usuario elegido. En el equipo de desarrollo la instancia FoodGo usa el puerto 3307. Para otro equipo, usar su puerto y usuario correspondientes.
+Crear la base `foodgo_delivery` con el usuario de aplicación como propietario. El servicio utiliza el driver JDBC `org.postgresql:postgresql` y `application-postgres.yml`. pgAdmin es el cliente SQL; conectarlo al mismo host, puerto y base que usa Java. La instancia local de PostgreSQL utiliza normalmente 5432.
 
-PowerShell (no guardar la contraseña en Git):
+Terminal CMD de VS Code, con Java 21 y Maven instalados:
 
-```powershell
-$env:DB_HOST = '127.0.0.1'
-$env:DB_PORT = '3307'
-$env:DB_NAME = 'foodgo_delivery'
-$env:DB_USER = 'foodgo_ep02'
-$claveMySQL = Read-Host 'Contraseña MySQL' -AsSecureString
-$env:DB_PASSWORD = [Net.NetworkCredential]::new('', $claveMySQL).Password
-mvn clean install
+```cmd
+mvn clean
+mvn install
 mvn package
-java -jar target/delivery-svc-2.0.0.jar --spring.profiles.active=mysql
+set "DB_HOST=127.0.0.1"
+set "DB_PORT=5432"
+set "DB_NAME=foodgo_delivery"
+set "DB_USER=foodgo_ep02"
+set /p "DB_PASSWORD=Contraseña PostgreSQL: "
+cls
+java -jar target\delivery-svc-2.0.0.jar "--spring.profiles.active=postgres"
 ```
 
-En Workbench, abrir el mismo host, puerto y esquema y ejecutar las consultas de `docs/DEMO_EP02.md`. Ejecutar la colección en orden. Para conservar el CRUD visible en la BD, detenerse después de la primera carpeta; la última comprueba DELETE y cascada.
+Introducir la contraseña fuera de la grabación; CMD muestra la entrada. Mantener la terminal abierta. No versionar ni mostrar DB_PASSWORD. Para el registro de servicios, activar `postgres,eureka` como se explica en `docs/EUREKA_EP02.md`.
 
-## Docker con base MySQL persistente
+En pgAdmin, abrir Query Tool sobre `foodgo_delivery` y ejecutar las consultas de `docs/DEMO_EP02.md`. PostgreSQL usa una conexión por base: no utiliza el comando USE de MySQL. Las tablas del dominio están en el esquema `public`.
 
-Seguir [docs/DOCKER_EP02.md](docs/DOCKER_EP02.md): copiar .env.example a .env, completar las contraseñas y ejecutar docker compose build, después docker compose up -d --wait --wait-timeout 300. El build ejecuta pruebas y cobertura con Maven clean verify; app espera la base y verifica HTTP. Los volúmenes conservan datos al reiniciar. APP_PORT permite evitar conflictos con un servicio local.
+El perfil MySQL anterior se conserva como alternativa durante la transición. Cambiar el perfil no traslada filas entre motores; la migración de datos se realiza con respaldo y comprobación de claves e importes.
+
+## Docker con base PostgreSQL persistente
+
+Seguir [docs/DOCKER_EP02.md](docs/DOCKER_EP02.md): copiar .env.example a .env, completar DB_PASSWORD y ejecutar docker compose build, después docker compose up -d --wait --wait-timeout 300. El build ejecuta pruebas y cobertura con Maven clean verify; app espera la base y verifica HTTP. Los volúmenes conservan datos al reiniciar. APP_PORT permite evitar conflictos con un servicio local.
 
 ## Eureka y demostración directa en VS Code
 
-Activar los perfiles mysql,eureka para registrar el servicio en http://127.0.0.1:8761. [docs/EUREKA_EP02.md](docs/EUREKA_EP02.md) contiene los comandos Maven/Java directos, variables MySQL, verificación del registro y uso de Postman/Workbench. El perfil eureka es explícito para conservar la ejecución independiente y las pruebas.
+Activar los perfiles postgres,eureka para registrar el servicio en http://127.0.0.1:8761. [docs/EUREKA_EP02.md](docs/EUREKA_EP02.md) contiene los comandos Maven/Java directos, variables PostgreSQL, verificación del registro y uso de Postman/pgAdmin. El perfil eureka es explícito para conservar la ejecución independiente y las pruebas.
+
+## Actualización PostgreSQL
+
+La rama `feature/ep02-postgresql` adapta JDBC, Docker y la documentación. Se mantienen endpoints, capas y relaciones JPA. Revisar la propuesta y sus verificaciones antes de fusionar en main.

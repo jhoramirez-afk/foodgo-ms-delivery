@@ -26,7 +26,7 @@ management:
       exposure:
         include: health,info
 
-# El perfil eureka habilita el registro. Test/H2/MySQL independientes siguen disponibles.
+# El perfil eureka habilita el registro. Test/H2/PostgreSQL y el perfil MySQL anterior siguen disponibles.
 eureka:
   client:
     enabled: false
