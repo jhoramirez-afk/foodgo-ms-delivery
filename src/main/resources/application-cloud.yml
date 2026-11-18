@@ -1,0 +1,15 @@
+# Perfil para Docker Swarm. Las credenciales se reciben mediante un secreto montado.
+spring:
+  config:
+    import: "configtree:/run/secrets/"
+  datasource:
+    password: ${db_password}
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 1
+      initialization-fail-timeout: 60000
+server:
+  forward-headers-strategy: framework
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}

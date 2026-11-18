@@ -181,3 +181,11 @@ Activar los perfiles postgres,eureka para registrar el servicio en http://127.0.
 ## Actualización PostgreSQL
 
 La rama `feature/ep02-postgresql` adapta JDBC, Docker y la documentación. Se mantienen endpoints, capas y relaciones JPA. Revisar la propuesta y sus verificaciones antes de fusionar en main.
+
+## EP03: AWS Academy y Docker Swarm
+
+Las imágenes base del Dockerfile están fijadas por digest. El build ejecuta Maven y pruebas antes de empaquetar la imagen Java 21.
+
+El despliegue Swarm usa `SPRING_PROFILES_ACTIVE=postgres,eureka,cloud`. `application-cloud.yml` lee `db_password` desde `/run/secrets/` mediante configtree, limita el pool de conexiones y asigna un ID Eureka distinto a cada réplica. Las credenciales no se incorporan a la imagen. No activar `cloud` sin montar ese secreto. El Compose local mantiene sus variables y puertos existentes.
+
+El CI de este repositorio valida el proyecto en cada cambio. El CD central de [foodgo-arquitectura](https://github.com/jhoramirez-afk/foodgo-arquitectura/blob/main/docs/EP03-Despliegue-AWS.md) fija los SHA de los nueve proyectos, construye imágenes en ECR, aprovisiona AWS con CloudFormation y despliega mediante SSM. Ejecutar ese pipeline para publicar una nueva versión del conjunto; no hay despliegue cloud automático desde este repositorio.

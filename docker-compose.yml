@@ -1,7 +1,7 @@
 name: "foodgo-delivery-postgres"
 services:
   postgres:
-    image: "postgres:18"
+    image: "postgres:18@sha256:2ea8630df176ad090ec92136dee850397c5af8781e4bcf2e4162593691c61bbc"
     environment:
       POSTGRES_DB: "foodgo_delivery"
       POSTGRES_USER: "${DB_USER:-foodgo_ep02}"
@@ -26,7 +26,7 @@ services:
     build:
       context: "."
       dockerfile: "Dockerfile"
-    image: "foodgo/delivery:ep02-postgres"
+    image: "foodgo/delivery:ep03-postgres"
     environment:
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-postgres}"
       EUREKA_URL: "${EUREKA_URL:-http://host.docker.internal:8761/eureka/}"
